@@ -1,7 +1,6 @@
 // eslint-disable-next-line no-unused-vars
-import { AnimatePresence, motion } from 'framer-motion'
-// eslint-disable-next-line no-unused-vars
-import { useState, useEffect, useCallback } from 'react'
+import { AnimatePresence, motion, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const images = [
@@ -32,6 +31,35 @@ const About = () => {
   const [direction, setDirection] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
+  const ref = useRef(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 300, damping: 30 });
+  const mouseYSpring = useSpring(y, { stiffness: 300, damping: 30 });
+
+  const rotateX = useMotionTemplate`${mouseYSpring}deg`;
+  const rotateY = useMotionTemplate`${mouseXSpring}deg`;
+
+  const handleMouseMove = (e) => {
+    if (!ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct * 15);
+    y.set(yPct * -15);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+    setIsHovered(false);
+  };
+
   const nextImage = useCallback(() => {
     setDirection(1)
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
@@ -53,20 +81,23 @@ const About = () => {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: false, amount: 0.2 }}
         transition={{ duration: 0.6 }}
         className="flex flex-col md:flex-row gap-12 items-center"
       >
         <div className="w-full md:w-1/2">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 inline-block relative">
-            About Me
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 inline-block relative">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              About Me
+            </span>
             <motion.div 
-              className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+              className="absolute -bottom-3 left-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
               initial={{ width: 0 }}
-              whileInView={{ width: "50%" }}
-              viewport={{ once: true, amount: 0.8 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              whileInView={{ width: "100%" }}
+              viewport={{ once: false }}
+              transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
             />
+            <div className="absolute -bottom-3 left-0 w-full h-1 bg-white/10 rounded-full -z-10" />
           </h2>
           <p className="text-gray-400 text-lg leading-relaxed mb-6">
             Hello! I&apos;m Somya, a Full Stack Developer who loves creating beautiful, functional, and user-centric digital experiences. My journey in web development has equipped me with a strong foundation in both frontend and backend technologies.
@@ -78,14 +109,17 @@ const About = () => {
             I am constantly learning and exploring new technologies to stay at the forefront of web development. Whether it&apos;s crafting sleek modern UIs or architecting secure backend systems, I am dedicated to delivering high-quality, scalable solutions.
           </p>
         </div>
-        <div className="w-full md:w-1/2 flex justify-center">
-          <div 
+        <div className="w-full md:w-1/2 flex justify-center perspective-[1000px]">
+          <motion.div 
+            ref={ref}
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
             className="w-72 h-80 md:w-80 md:h-[400px] relative rounded-2xl overflow-hidden group shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+            onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+            onMouseLeave={handleMouseLeave}
           >
-            <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-10 pointer-events-none"></div>
-            <div className="absolute inset-0 border-2 border-white/20 rounded-2xl m-4 group-hover:m-2 transition-all duration-500 z-20 pointer-events-none"></div>
+            <div style={{ transform: "translateZ(10px)" }} className="absolute inset-0 bg-gradient-to-tr from-blue-500 to-purple-600 opacity-0 group-hover:opacity-20 transition-opacity duration-500 z-10 pointer-events-none"></div>
+            <div style={{ transform: "translateZ(20px)" }} className="absolute inset-0 border-2 border-white/20 rounded-2xl m-4 group-hover:m-2 transition-all duration-500 z-20 pointer-events-none"></div>
             
             <motion.div className="w-full h-full" whileHover={{ scale: 1.05 }} transition={{ duration: 0.7 }}>
               <AnimatePresence initial={false} custom={direction}>
@@ -116,7 +150,7 @@ const About = () => {
                 <ChevronRight size={20} />
               </button>
             </div>
-          </div>
+          </motion.div>
         </div>
       </motion.div>
     </section>

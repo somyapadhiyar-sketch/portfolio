@@ -56,26 +56,26 @@ const ProjectCard = ({ project, index }) => {
     const mouseY = e.clientY - rect.top;
     const xPct = mouseX / width - 0.5;
     const yPct = mouseY / height - 0.5;
-    x.set(xPct * 15); 
-    y.set(yPct * -15);
+    x.set(xPct * 20); 
+    y.set(yPct * -20);
   };
 
   const handleMouseLeave = () => { x.set(0); y.set(0); };
   const Icon = project.icon;
 
   return (
-    <motion.div 
-      ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} 
-      initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} 
+    <motion.div
+      ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}
+      initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} 
       transition={{ delay: index * 0.2, duration: 0.6, type: "spring", stiffness: 100 }}
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} 
-      className={`relative w-full h-[420px] rounded-2xl bg-white/[0.02] backdrop-blur-md border border-white/10 p-6 flex flex-col justify-between group transition-colors duration-500 ${project.glow} ${project.border}`}
+      className={`relative w-full h-[420px] rounded-2xl bg-transparent border border-white/10 p-6 group transition-colors duration-500 ${project.glow} ${project.border}`}
     >
       {/* Hover Background Layer */}
       <div style={{ transform: "translateZ(10px)" }} className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
       
       <div style={{ transform: "translateZ(40px)" }} className="flex flex-col h-full relative z-10">
-        <div className="w-full h-40 rounded-xl mb-6 flex items-center justify-center bg-white/5 border border-white/10 shadow-inner group-hover:bg-white/10 transition-colors">
+        <div className="w-full h-40 rounded-xl mb-6 flex items-center justify-center bg-transparent border border-white/10 group-hover:bg-white/5 transition-colors">
           <motion.div 
             animate={{ y: [0, -5, 0], rotate: [0, 5, -5, 0] }} 
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: index * 0.4 }}
@@ -84,7 +84,7 @@ const ProjectCard = ({ project, index }) => {
           </motion.div>
         </div>
         
-        <div>
+        <div className="flex-grow">
           <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-400 transition-all duration-300">{project.title}</h3>
           <p className="text-gray-400 text-sm line-clamp-3 mb-4">{project.description}</p>
         </div>
@@ -95,9 +95,9 @@ const ProjectCard = ({ project, index }) => {
               key={i} 
               initial={{ opacity: 0, scale: 0.8 }} 
               whileInView={{ opacity: 1, scale: 1, transition: { delay: index * 0.2 + (i * 0.1), duration: 0.4, type: "spring", stiffness: 150 } }} 
-              viewport={{ once: true }} 
+              viewport={{ once: false }} 
               whileHover={{ scale: 1.1, y: -3, rotate: i % 2 === 0 ? 3 : -3 }} 
-              className={`text-xs px-3 py-1.5 bg-black/40 border border-white/5 rounded-xl font-medium text-gray-300 transition-colors cursor-default ${project.itemHover}`}
+              className={`text-xs px-3 py-1.5 bg-transparent border border-white/10 rounded-xl font-medium text-gray-300 transition-colors cursor-default ${project.itemHover}`}
             >
               {t}
             </motion.span>
@@ -118,7 +118,7 @@ const Projects = () => {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] max-w-4xl h-64 bg-purple-500/10 blur-[120px] rounded-full pointer-events-none z-0" 
       />
       
-      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.6 }} className="relative z-10">
+      <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }} className="relative z-10">
         
         {/* Animated Title */}
         <div className="flex justify-center mb-16">
@@ -130,7 +130,7 @@ const Projects = () => {
               className="absolute -bottom-3 left-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
               initial={{ width: 0 }}
               whileInView={{ width: "100%" }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
             />
             <div className="absolute -bottom-3 left-0 w-full h-1 bg-white/10 rounded-full -z-10" />

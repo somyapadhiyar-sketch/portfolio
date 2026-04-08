@@ -63,7 +63,7 @@ const SkillCard = ({ category, index }) => {
   return (
     <motion.div 
       ref={ref} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} 
+      initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: false }} 
       transition={{ delay: index * 0.2, duration: 0.6, type: "spring", stiffness: 100 }} 
       style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       className={`bg-white/[0.02] backdrop-blur-md rounded-2xl p-8 border border-white/10 transition-colors duration-500 group relative ${category.glow} ${category.border}`}
@@ -86,7 +86,7 @@ const SkillCard = ({ category, index }) => {
               key={i} 
               initial={{ opacity: 0, scale: 0.8 }} 
               whileInView={{ opacity: 1, scale: 1, transition: { delay: index * 0.2 + (i * 0.1), duration: 0.4, type: "spring", stiffness: 150 } }} 
-              viewport={{ once: true }} 
+              viewport={{ once: false }} 
               whileHover={{ scale: 1.1, y: -3, rotate: i % 2 === 0 ? 3 : -3 }} 
               className={`px-4 py-2 bg-black/40 border border-white/5 rounded-xl text-sm font-medium text-gray-300 transition-colors cursor-default ${category.itemHover}`}
             >
@@ -109,7 +109,7 @@ const Skills = () => {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] max-w-4xl h-64 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none z-0" 
       />
       
-      <motion.div className="relative z-10" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 0.6 }}>
+      <motion.div className="relative z-10" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: false, amount: 0.1 }} transition={{ duration: 0.6 }}>
         
         {/* Animated Title */}
         <div className="flex justify-center mb-16">
@@ -121,7 +121,7 @@ const Skills = () => {
               className="absolute -bottom-3 left-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full"
               initial={{ width: 0 }}
               whileInView={{ width: "100%" }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ delay: 0.2, duration: 0.8, ease: "easeOut" }}
             />
             <div className="absolute -bottom-3 left-0 w-full h-1 bg-white/10 rounded-full -z-10" />

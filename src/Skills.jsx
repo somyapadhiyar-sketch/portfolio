@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
 import { useRef } from 'react'
 import { Layout, Database, Cpu } from 'lucide-react'

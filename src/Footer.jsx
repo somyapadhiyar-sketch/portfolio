@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import { GitHub, Instagram, Linkedin } from 'react-feather'
 
 const Footer = () => {
@@ -15,21 +14,19 @@ const Footer = () => {
           © {new Date().getFullYear()} Somya Padhiyar. All rights reserved.
         </p>
         <div className="flex gap-6">
-          {socialLinks.map((link, index) => {
+          {socialLinks.map((link) => {
             const Icon = link.icon;
             return (
-              <motion.a 
-                key={index} 
+              <a
+                key={link.name}
                 href={link.href} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                whileHover={{ scale: 1.1, y: -2 }}
-                whileTap={{ scale: 0.95 }}
                 className="text-gray-400 hover:text-white transition-colors"
                 title={link.name}
               >
                 <Icon size={20} strokeWidth={1.5} />
-              </motion.a>
+              </a>
             )
           })}
         </div>

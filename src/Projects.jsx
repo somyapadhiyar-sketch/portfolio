@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { motion, useMotionTemplate, useMotionValue, useSpring } from 'framer-motion'
 import { useRef } from 'react'
 import { ShoppingCart, Users, Sparkles } from 'lucide-react'

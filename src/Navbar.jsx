@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion as Motion } from 'framer-motion'
 import { Home, User, Code, Briefcase, Mail } from 'lucide-react'
 
 const Navbar = () => {
@@ -11,7 +11,7 @@ const Navbar = () => {
   ]
 
   return (
-    <motion.nav
+    <Motion.nav
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -29,7 +29,7 @@ const Navbar = () => {
           )
         })}
       </div>
-    </motion.nav>
+    </Motion.nav>
   )
 }
 

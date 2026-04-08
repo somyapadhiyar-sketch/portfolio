@@ -1,10 +1,9 @@
-/* eslint-disable react/no-unknown-property, react/prop-types */
 import { Suspense, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Points, PointMaterial } from '@react-three/drei'
 import { inSphere } from 'maath/random'
 
-const Stars = (props) => {
+const Stars = () => {
   const ref = useRef()
   const [sphere] = useState(() => inSphere(new Float32Array(5000 * 3), { radius: 1.5 }))
 
@@ -17,7 +16,7 @@ const Stars = (props) => {
 
   return (
     <group rotation={[0, 0, Math.PI / 4]}>
-      <Points ref={ref} positions={sphere} stride={3} frustumCulled={false} {...props}>
+      <Points ref={ref} positions={sphere} stride={3} frustumCulled={false}>
         <PointMaterial transparent color="#8b5cf6" size={0.002} sizeAttenuation={true} depthWrite={false} />
       </Points>
     </group>

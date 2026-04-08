@@ -1,5 +1,7 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { useState, useEffect } from 'react'
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'framer-motion'
+// eslint-disable-next-line no-unused-vars
+import { useState, useEffect, useCallback } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 const images = [
@@ -30,21 +32,21 @@ const About = () => {
   const [direction, setDirection] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     setDirection(1)
     setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length)
-  }
+  }, [])
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     setDirection(-1)
     setCurrentImageIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length)
-  }
+  }, [])
 
   useEffect(() => {
     if (isHovered) return;
     const interval = setInterval(nextImage, 4000)
     return () => clearInterval(interval)
-  }, [isHovered])
+  }, [isHovered, nextImage])
 
   return (
     <section id="about" className="w-full max-w-6xl mx-auto py-24 px-4">
@@ -58,7 +60,13 @@ const About = () => {
         <div className="w-full md:w-1/2">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 inline-block relative">
             About Me
-            <div className="absolute -bottom-2 left-0 w-1/2 h-1 bg-blue-500 rounded-full"></div>
+            <motion.div 
+              className="absolute -bottom-2 left-0 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+              initial={{ width: 0 }}
+              whileInView={{ width: "50%" }}
+              viewport={{ once: true, amount: 0.8 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+            />
           </h2>
           <p className="text-gray-400 text-lg leading-relaxed mb-6">
             Hello! I&apos;m Somya, a Full Stack Developer who loves creating beautiful, functional, and user-centric digital experiences. My journey in web development has equipped me with a strong foundation in both frontend and backend technologies.

@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion as Motion } from 'framer-motion'
 import { useState } from 'react'
 
 const Contact = () => {
@@ -12,8 +12,7 @@ const Contact = () => {
 
     const formData = new FormData(e.target)
     
-    // 🚨 REPLACE THE STRING BELOW WITH YOUR ACTUAL WEB3FORMS ACCESS KEY 🚨
-    formData.append("access_key", "c8530694-4f7b-41cc-8e44-fe984257b9a6")
+    formData.append("access_key", import.meta.env.VITE_WEB3FORMS_ACCESS_KEY)
 
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
@@ -27,7 +26,7 @@ const Contact = () => {
       } else {
         setStatus("error")
       }
-    } catch (error) {
+    } catch {
       setStatus("error")
     }
     setIsSubmitting(false)
@@ -36,7 +35,7 @@ const Contact = () => {
 
   return (
     <section id="contact" className="w-full max-w-6xl mx-auto py-24 mb-12 px-4">
-      <motion.div
+      <Motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.1 }}
@@ -84,7 +83,7 @@ const Contact = () => {
               placeholder="Your message here..."
             ></textarea>
           </div>
-          <motion.button 
+          <Motion.button 
             disabled={isSubmitting}
             whileHover={{ scale: 1.02 }} 
             whileTap={{ scale: 0.98 }} 
@@ -92,16 +91,16 @@ const Contact = () => {
             className={`w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] ${isSubmitting ? 'opacity-70 cursor-wait' : ''}`}
           >
             {isSubmitting ? 'Sending...' : 'Send Message'}
-          </motion.button>
+          </Motion.button>
 
           {status === 'success' && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-green-400 text-center font-medium">Message sent successfully!</motion.p>
+            <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-green-400 text-center font-medium">Message sent successfully!</Motion.p>
           )}
           {status === 'error' && (
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">Failed to send message. Please try again later.</motion.p>
+            <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">Failed to send message. Please try again later.</Motion.p>
           )}
         </form>
-      </motion.div>
+      </Motion.div>
     </section>
   )
 }

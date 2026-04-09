@@ -9,6 +9,7 @@ const Contact = () => {
   const [generatedOtp, setGeneratedOtp] = useState('')
   const [userOtp, setUserOtp] = useState('')
   const [savedData, setSavedData] = useState(null)
+  const [otpExpiry, setOtpExpiry] = useState(null)
 
   const handleSendOTP = async (e) => {
     e.preventDefault()
@@ -32,6 +33,7 @@ const Contact = () => {
     // 2. Generate a 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
     setGeneratedOtp(otp)
+    setOtpExpiry(Date.now() + 5 * 60 * 1000) // OTP expires in 5 minutes (5 * 60 seconds * 1000 ms)
     setSavedData({ name, email, message })
 
     try {
@@ -58,6 +60,14 @@ const Contact = () => {
     e.preventDefault()
     setIsSubmitting(true)
     setStatus('')
+
+    // Check if the OTP has expired
+    if (Date.now() > otpExpiry) {
+      setStatus("otp_expired")
+      setIsSubmitting(false)
+      setTimeout(() => setStatus(''), 5000)
+      return
+    }
 
     if (userOtp !== generatedOtp) {
       setStatus("invalid_otp")
@@ -193,6 +203,9 @@ const Contact = () => {
           )}
           {status === 'invalid_otp' && (
             <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">Incorrect OTP. Please try again.</Motion.p>
+          )}
+          {status === 'otp_expired' && (
+            <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">OTP has expired (over 5 minutes). Please click Cancel and try again.</Motion.p>
           )}
       </Motion.div>
     </section>

@@ -1,5 +1,5 @@
 import { motion as Motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import emailjs from '@emailjs/browser'
 
 const Contact = () => {
@@ -10,6 +10,19 @@ const Contact = () => {
   const [userOtp, setUserOtp] = useState('')
   const [savedData, setSavedData] = useState(null)
   const [otpExpiry, setOtpExpiry] = useState(null)
+  const [timer, setTimer] = useState(0)
+
+  useEffect(() => {
+    let interval;
+    if (otpStep && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [otpStep, timer]);
 
   const handleSendOTP = async (e) => {
     e.preventDefault()
@@ -33,7 +46,8 @@ const Contact = () => {
     // 2. Generate a 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString()
     setGeneratedOtp(otp)
-    setOtpExpiry(Date.now() + 5 * 60 * 1000) // OTP expires in 5 minutes (5 * 60 seconds * 1000 ms)
+    setOtpExpiry(Date.now() + 60 * 1000) // OTP expires in 1 minute (60 seconds)
+    setTimer(60)
     setSavedData({ name, email, message })
 
     try {
@@ -46,6 +60,33 @@ const Contact = () => {
       )
       
       setOtpStep(true)
+      setStatus("otp_sent")
+      setTimeout(() => setStatus(''), 5000)
+    } catch (error) {
+      console.error("EmailJS Error:", error)
+      setStatus("error")
+      setTimeout(() => setStatus(''), 5000)
+    }
+    setIsSubmitting(false)
+  }
+
+  const handleResendOTP = async () => {
+    setIsSubmitting(true)
+    setStatus('')
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    setGeneratedOtp(otp)
+    setOtpExpiry(Date.now() + 60 * 1000)
+    setTimer(60)
+
+    try {
+      await emailjs.send(
+        "service_g5pawwl",
+        "template_2hk4qo8",
+        { name: savedData.name, email: savedData.email, otp_code: otp },
+        "3Cxe9xpJRB6cFSmA6"
+      )
+      
       setStatus("otp_sent")
       setTimeout(() => setStatus(''), 5000)
     } catch (error) {
@@ -84,6 +125,19 @@ const Contact = () => {
         savedData,
         "3Cxe9xpJRB6cFSmA6" // 3. Paste your Public Key here AGAIN
       )
+
+      // Send Template 3: The Auto-Reply "Thank You" email (Using Account 2)
+      try {
+        await emailjs.send(
+          "service_z2kwxvm", // Paste Account 2 Service ID here
+          "template_sjqr0dk", // Paste Account 2 Template ID here
+          { name: savedData.name, email: savedData.email },
+          "9pnb8VX4-wmjrsSSY" // Paste Account 2 Public Key here
+        )
+      } catch (autoReplyError) {
+        console.error("Auto-reply failed, but message was sent:", autoReplyError)
+      }
+
       setStatus("success")
       setOtpStep(false)
       setUserOtp('')
@@ -127,16 +181,26 @@ const Contact = () => {
               />
             </div>
             <div className="flex gap-4">
-              <Motion.button type="button" onClick={() => setOtpStep(false)} className="w-full py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-all">
-                Cancel
+              <Motion.button 
+                type="button" 
+                disabled={timer > 0 || isSubmitting}
+                onClick={handleResendOTP} 
+                className={`w-full py-4 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-all ${timer > 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                {timer > 0 ? `Resend OTP (${timer}s)` : 'Resend OTP'}
               </Motion.button>
               <Motion.button 
-                disabled={isSubmitting}
+                disabled={isSubmitting || timer === 0}
                 type="submit"
-                className={`w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] ${isSubmitting ? 'opacity-70 cursor-wait' : ''}`}
+                className={`w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-bold rounded-lg transition-all shadow-[0_0_15px_rgba(59,130,246,0.3)] ${(isSubmitting || timer === 0) ? 'opacity-70 cursor-not-allowed' : ''}`}
               >
                 {isSubmitting ? 'Verifying...' : 'Verify & Send'}
               </Motion.button>
+            </div>
+            <div className="mt-4 text-center">
+              <button type="button" onClick={() => { setOtpStep(false); setTimer(0); }} className="text-gray-400 hover:text-white text-sm underline transition-colors">
+                Cancel and go back
+              </button>
             </div>
           </form>
         ) : (
@@ -205,7 +269,7 @@ const Contact = () => {
             <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">Incorrect OTP. Please try again.</Motion.p>
           )}
           {status === 'otp_expired' && (
-            <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">OTP has expired (over 5 minutes). Please click Cancel and try again.</Motion.p>
+            <Motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 text-center font-medium">OTP has expired (over 1 minute). Please click Resend OTP.</Motion.p>
           )}
       </Motion.div>
     </section>

@@ -12,21 +12,32 @@ const Contact = () => {
 
     const formData = new FormData(e.target)
     
-    formData.append("access_key", import.meta.env.VITE_WEB3FORMS_ACCESS_KEY)
+    // IMPORTANT: Replace the string below with your ACTUAL Web3Forms key
+    formData.append("access_key", "c8530694-4f7b-41cc-8e44-fe984257b9a6")
+
+    // Convert form data to JSON (Web3Forms recommended approach for React)
+    const object = Object.fromEntries(formData);
+    const json = JSON.stringify(object);
 
     try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        body: formData
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: json
       })
       const data = await res.json()
       if (data.success) {
         setStatus("success")
         e.target.reset()
       } else {
+        console.error("Web3Forms Error:", data)
         setStatus("error")
       }
-    } catch {
+    } catch (error) {
+      console.error("Fetch Error:", error)
       setStatus("error")
     }
     setIsSubmitting(false)
